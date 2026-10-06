@@ -1,0 +1,13 @@
+{
+  "name": "city-network",
+  "version": "1.0.0",
+  "description": "19 granular urban dataset ingestion and synchronization pipeline for global city atlases (Cloudflare R2)",
+  "type": "module",
+  "scripts": {
+    "sync": "bun run scripts/transform-all-to-granular-19.mjs",
+    "sync:all": "bun run scripts/transform-all-to-granular-19.mjs --city all --concurrency 8"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0"
+  }
+}
