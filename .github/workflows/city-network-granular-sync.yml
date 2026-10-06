@@ -1,19 +1,18 @@
 name: city-network-granular-sync
-# Ingests and synchronizes the 19 granular urban dataset files
-# (districts, areas, pois, landmarks, streets, baseline, tram, etc.)
-# directly to Cloudflare R2 (geo-datalake and globe).
+# Triggers the Cloudflare Worker (city-network) to transform and synchronize
+# the 19 granular urban dataset files directly on Cloudflare R2 (globe/data/).
 
 on:
   workflow_dispatch:
     inputs:
       city:
-        description: 'City slug (e.g. amsterdam, berlin, or all)'
+        description: 'City slug (e.g. amsterdam, melbourne, berlin, or all)'
         required: true
         default: 'all'
-      concurrency:
-        description: 'Parallel batch size'
+      batch:
+        description: 'Batch size per Worker request'
         required: false
-        default: '8'
+        default: '15'
 
 jobs:
   sync:
@@ -26,14 +25,8 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install dependencies
-        run: |
-          bun install
-
-      - name: Transform and Sync Granular 19 Datasets to R2
+      - name: Trigger Cloudflare Worker Transformation
         env:
-          R2_DATALAKE_ACCOUNT_ID: ${{ secrets.R2_DATALAKE_ACCOUNT_ID }}
-          R2_DATALAKE_ACCESS_KEY_ID: ${{ secrets.R2_DATALAKE_ACCESS_KEY_ID }}
-          R2_DATALAKE_SECRET_ACCESS_KEY: ${{ secrets.R2_DATALAKE_SECRET_ACCESS_KEY }}
+          WORKER_URL: 'https://city-network.foodstarmelbourne.workers.dev'
         run: |
-          bun run scripts/transform-all-to-granular-19.mjs --city "${{ inputs.city }}" --concurrency "${{ inputs.concurrency }}"
+          bun run scripts/dispatch-worker.mjs --city "${{ inputs.city }}" --batch "${{ inputs.batch }}"

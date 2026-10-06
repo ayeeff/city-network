@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "city-network",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "r2_buckets": [
+    {
+      "binding": "GLOBE",
+      "bucket_name": "globe"
+    },
+    {
+      "binding": "DATALAKE",
+      "bucket_name": "geo-datalake"
+    }
+  ]
+}
